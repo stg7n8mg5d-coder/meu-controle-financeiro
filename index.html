@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Meu Financeiro">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>Meu Controle Financeiro</title>
+<style>
+:root{--bg:#0b1220;--panel:#151f30;--panel2:#1b2940;--text:#f4f7fb;--muted:#9eacc0;--green:#35d39a;--red:#ff7185;--blue:#78a9ff;--line:#29384e}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#101a2b,#0b1220 35%);color:var(--text);font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 14px calc(24px + env(safe-area-inset-bottom))}
+.wrap{max-width:760px;margin:auto}.top{padding:22px 4px 16px}.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}.top h1{font-size:27px;margin:7px 0 4px}.top p{color:var(--muted);margin:0;font-size:14px}
+.tabs{display:flex;gap:7px;background:#101a2a;padding:5px;border-radius:14px;margin:10px 0 16px}.tabs button{flex:1;border:0;background:transparent;color:var(--muted);padding:11px 4px;border-radius:10px;font-weight:700}.tabs button.active{background:var(--panel2);color:white}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px 11px;min-width:0}.card small{color:var(--muted);font-size:11px}.card strong{display:block;font-size:clamp(15px,4vw,21px);margin-top:7px;overflow-wrap:anywhere}.positive{color:var(--green)}.negative{color:var(--red)}
+.section{margin-top:20px}.sectionhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.section h2{font-size:17px;margin:0}.muted{color:var(--muted);font-size:13px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;margin-top:12px}
+label{display:block;color:var(--muted);font-size:12px;font-weight:700;margin:11px 0 6px}input,select{width:100%;background:#0e1726;border:1px solid var(--line);border-radius:11px;padding:13px;color:var(--text);font-size:16px;outline:none}input:focus,select:focus{border-color:var(--blue)}
+.type{display:grid;grid-template-columns:1fr 1fr;gap:8px}.type button,.primary,.secondary,.danger{border:0;border-radius:11px;padding:13px;font-weight:800;font-size:14px}.type button{background:#0e1726;color:var(--muted);border:1px solid var(--line)}.type button.chosen.income{background:#123b32;color:var(--green);border-color:#24775d}.type button.chosen.expense{background:#43232e;color:var(--red);border-color:#874354}
+.primary{background:var(--green);color:#06251b;width:100%;margin-top:14px}.secondary{background:#26364e;color:white}.danger{background:#43232e;color:#ff9aa9;padding:8px 10px}
+.voice{display:flex;gap:8px}.voice input{flex:1;min-width:0}.voice button{white-space:nowrap;background:#26364e;color:white;border:0;border-radius:11px;padding:0 13px;font-weight:800}
+.entry{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border:0}.dot{width:10px;height:10px;border-radius:50%;flex:none}.entrymain{flex:1;min-width:0}.entrymain b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}.entrymain small{color:var(--muted);font-size:12px}.amount{font-weight:800;white-space:nowrap;font-size:14px}
+.barline{display:grid;grid-template-columns:100px 1fr 82px;gap:8px;align-items:center;margin:12px 0;font-size:12px}.track{height:8px;background:#0c1523;border-radius:20px;overflow:hidden}.fill{height:100%;background:var(--blue);border-radius:20px}.empty{text-align:center;color:var(--muted);padding:22px 8px;font-size:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}
+.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}.hidden{display:none!important}
+@media(max-width:380px){.cards{gap:6px}.card{padding:11px 8px}.card small{font-size:10px}.barline{grid-template-columns:82px 1fr 75px}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top"><div class="eyebrow">FINANÇAS PESSOAIS · OFFLINE</div><h1>Meu Controle Financeiro</h1><p>Seu dinheiro organizado, do seu jeito.</p></header>
+<div class="tabs"><button class="active" data-tab="inicio">Visão geral</button><button data-tab="lancar">Lançar</button><button data-tab="historico">Histórico</button></div>
+<section id="inicio">
+<div class="tabs" style="margin-top:0"><button class="active" data-period="day">Hoje</button><button data-period="week">Semana</button><button data-period="month">Mês</button></div>
+<div class="cards"><div class="card"><small>Entradas</small><strong class="positive" id="sumIn">R$ 0,00</strong></div><div class="card"><small>Saídas</small><strong class="negative" id="sumOut">R$ 0,00</strong></div><div class="card"><small>Saldo</small><strong id="sumBalance">R$ 0,00</strong></div></div>
+<div class="section"><div class="sectionhead"><h2>Despesas por categoria</h2><span class="muted" id="periodLabel">Hoje</span></div><div class="panel" id="categories"><div class="empty">Nenhuma despesa neste período.</div></div></div>
+<div class="section"><div class="sectionhead"><h2>Últimos lançamentos</h2><span class="muted">Recentes</span></div><div class="panel" id="recent"><div class="empty">Seus lançamentos aparecerão aqui.</div></div></div>
+</section>
+<section id="lancar" class="hidden">
+<div class="panel">
+<h2 style="margin:0 0 12px;font-size:17px">Registrar movimentação</h2>
+<div class="type"><button class="chosen income" id="incomeBtn" type="button">＋ Entrada</button><button id="expenseBtn" type="button">－ Saída</button></div>
+<label for="amount">Valor (R$)</label><input id="amount" inputmode="decimal" placeholder="0,00">
+<label for="description">Descrição</label><input id="description" placeholder="Ex.: combustível, mercado, salário">
+<label for="category">Categoria</label><select id="category"></select>
+<label for="date">Data</label><input id="date" type="date">
+<button class="primary" id="save">Salvar lançamento</button>
+<div class="note">Dica: também pode escrever uma frase abaixo, como “gastei 45 reais no almoço”, e tocar em interpretar.</div>
+<label for="command">Lançamento por frase ou voz</label>
+<div class="voice"><input id="command" placeholder="Ex.: recebi 2500 de salário"><button id="mic" type="button" aria-label="Falar">🎙️ Falar</button></div>
+<button class="secondary" id="interpret" style="width:100%;margin-top:8px">Interpretar frase</button>
+<div class="note" id="voiceNote">O reconhecimento de voz do navegador pode exigir internet. Para uso offline, use a digitação ou o ditado do teclado do iPhone, se disponível no aparelho.</div>
+</div></section>
+<section id="historico" class="hidden">
+<div class="panel"><div class="sectionhead"><h2>Todos os lançamentos</h2><span class="muted" id="count">0 registros</span></div><div id="allEntries"><div class="empty">Ainda não há lançamentos.</div></div></div>
+<div class="panel"><h2 style="font-size:16px;margin:0 0 10px">Backup dos seus dados</h2><div class="actions"><button class="secondary" id="export">Exportar backup</button><button class="secondary" id="importBtn">Importar backup</button></div><input class="hidden" type="file" id="file" accept="application/json"><p class="note">Os dados ficam salvos neste navegador e neste aparelho. Exporte um backup regularmente para não perdê-los se limpar os dados do Safari ou trocar de aparelho.</p></div>
+</section>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id), money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const today=()=>{let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+let entries=[];try{entries=JSON.parse(localStorage.getItem('mcf_entries_v1')||'[]')}catch(e){entries=[]}
+let type='income',period='day';
+const cats={income:['Salário','Serviços','Vendas','Recebimentos','Investimentos','Outros'],expense:['Alimentação','Moradia','Água e luz','Telefone e internet','Combustível','Transporte','Saúde','Compras','Lazer','Impostos','Cartão','Outros']};
+function persist(){localStorage.setItem('mcf_entries_v1',JSON.stringify(entries))}
+function setType(t){type=t;$('incomeBtn').className=t==='income'?'chosen income':'';$('expenseBtn').className=t==='expense'?'chosen expense':'';fillCats()}
+function fillCats(){let old=$('category').value;let a=cats[type];$('category').innerHTML=a.map(x=>`<option>${x}</option>`).join('');if(a.includes(old))$('category').value=old}
+function add(e){entries.push(e);persist();render();$('amount').value='';$('description').value='';$('command').value='';showTab('inicio')}
+function dateObj(s){return new Date(s+'T12:00:00')}
+function inPeriod(s){let d=dateObj(s),now=dateObj(today());if(period==='day')return s===today();if(period==='month')return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();let start=new Date(now);let day=(start.getDay()+6)%7;start.setDate(start.getDate()-day);start.setHours(0,0,0,0);let end=new Date(start);end.setDate(end.getDate()+7);return d>=start&&d<end}
+function fmtDate(s){return dateObj(s).toLocaleDateString('pt-BR')}
+function entryHTML(e,del=false){return `<div class="entry"><span class="dot" style="background:${e.type==='income'?'var(--green)':'var(--red)'}"></span><div class="entrymain"><b>${esc(e.description)}</b><small>${esc(e.category)} · ${fmtDate(e.date)}</small></div><span class="amount ${e.type==='income'?'positive':'negative'}">${e.type==='income'?'+':'−'} ${money(e.amount)}</span>${del?`<button class="danger" data-delete="${e.id}">Excluir</button>`:''}</div>`}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){let arr=entries.filter(e=>inPeriod(e.date));let inc=arr.filter(e=>e.type==='income').reduce((a,e)=>a+e.amount,0),out=arr.filter(e=>e.type==='expense').reduce((a,e)=>a+e.amount,0);$('sumIn').textContent=money(inc);$('sumOut').textContent=money(out);$('sumBalance').textContent=money(inc-out);$('sumBalance').className=(inc-out)>=0?'positive':'negative';$('periodLabel').textContent={day:'Hoje',week:'Esta semana',month:'Este mês'}[period];
+let groups={};arr.filter(e=>e.type==='expense').forEach(e=>groups[e.category]=(groups[e.category]||0)+e.amount);let vals=Object.entries(groups).sort((a,b)=>b[1]-a[1]);$('categories').innerHTML=vals.length?vals.map(([k,v])=>`<div class="barline"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${out?Math.max(2,v/out*100):0}%"></div></div><b style="text-align:right">${money(v)}</b></div>`).join(''):'<div class="empty">Nenhuma despesa neste período.</div>';
+let sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);$('recent').innerHTML=sorted.slice(0,5).map(e=>entryHTML(e)).join('')||'<div class="empty">Seus lançamentos aparecerão aqui.</div>';$('allEntries').innerHTML=sorted.map(e=>entryHTML(e,true)).join('')||'<div class="empty">Ainda não há lançamentos.</div>';$('count').textContent=`${entries.length} registro${entries.length===1?'':'s'}`}
+function showTab(t){document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));['inicio','lancar','historico'].forEach(x=>$(x).classList.toggle('hidden',x!==t))}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{period=b.dataset.period;document.querySelectorAll('[data-period]').forEach(x=>x.classList.toggle('active',x===b));render()});
+$('incomeBtn').onclick=()=>setType('income');$('expenseBtn').onclick=()=>setType('expense');$('date').value=today();
+$('save').onclick=()=>{let amount=Number($('amount').value.replace(/\./g,'').replace(',','.'));if(!Number.isFinite(amount)||amount<=0){alert('Informe um valor válido.');return}if(!$('description').value.trim()){alert('Informe uma descrição.');return}add({id:Date.now(),type,amount,description:$('description').value.trim(),category:$('category').value,date:$('date').value||today()})};
+function parseCommand(s){let text=s.toLowerCase().trim();let m=text.match(/(?:r\\$\\s*)?(\\d+(?:[.,]\\d{1,2})?)/);if(!m)return null;let amount=Number(m[1].replace(',','.'));let t=/\\b(recebi|ganhei|entrou|entrada|sal[aá]rio|vendi|pagaram)\\b/.test(text)?'income':'expense';let desc=text.replace(/(?:r\\$\\s*)?\\d+(?:[.,]\\d{1,2})?/,'').replace(/\\b(gastei|paguei|comprei|despesa|recebi|ganhei|entrou|entrada|sal[aá]rio|vendi|pagaram|reais|real|de|no|na|com|em)\\b/g,' ').replace(/\\s+/g,' ').trim();if(!desc)desc=t==='income'?'Recebimento':'Despesa';let all=[...cats[t]];let cat=all.find(c=>desc.toLowerCase().includes(c.toLowerCase()));if(!cat){if(/combust[ií]vel|gasolina|posto/.test(desc))cat='Combustível';else if(/mercado|comida|almo[cç]o|janta|lanche/.test(desc))cat='Alimentação';else if(/luz|energia|[áa]gua/.test(desc))cat='Água e luz';else if(/sal[aá]rio/.test(text))cat='Salário';else cat='Outros'}return {type:t,amount,description:desc[0].toUpperCase()+desc.slice(1),category:cat}}
+function interpret(){let p=parseCommand($('command').value);if(!p){alert('Não consegui identificar o valor. Exemplo: gastei 45,90 no almoço.');return}setType(p.type);$('amount').value=p.amount.toFixed(2).replace('.',',');$('description').value=p.description;$('category').value=p.category;$('date').value=today();$('voiceNote').textContent='Confira os campos preenchidos e toque em “Salvar lançamento”.'}
+$('interpret').onclick=interpret;$('command').addEventListener('keydown',e=>{if(e.key==='Enter')interpret()});
+$('mic').onclick=()=>{let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('voiceNote').textContent='Este navegador não oferece reconhecimento de voz integrado. Use o microfone do teclado do iPhone para ditar no campo de texto.';return}try{let r=new SR();r.lang='pt-BR';r.onresult=e=>{$('command').value=e.results[0][0].transcript;interpret()};r.onerror=()=>{$('voiceNote').textContent='Não foi possível reconhecer a fala. Tente o ditado do teclado.'};r.start()}catch(e){$('voiceNote').textContent='Não foi possível iniciar o microfone. Use o ditado do teclado do iPhone.'}};
+document.addEventListener('click',e=>{let b=e.target.closest('[data-delete]');if(b&&confirm('Excluir este lançamento?')){entries=entries.filter(x=>x.id!==Number(b.dataset.delete));persist();render()}});
+$('export').onclick=()=>{let blob=new Blob([JSON.stringify({app:'Meu Controle Financeiro',version:1,entries},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-controle-financeiro.json';a.click();URL.revokeObjectURL(a.href)};
+$('importBtn').onclick=()=>$('file').click();$('file').onchange=async e=>{try{let data=JSON.parse(await e.target.files[0].text());let list=Array.isArray(data)?data:data.entries;if(!Array.isArray(list))throw Error();if(confirm('Importar backup? Os lançamentos atuais serão substituídos.')){entries=list;persist();render();alert('Backup importado.')}}catch(err){alert('Arquivo de backup inválido.')}e.target.value=''};
+fillCats();render();
+})();
+</script><script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
+}
+</script>
+</body></html>
